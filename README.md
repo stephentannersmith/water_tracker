@@ -1,4 +1,4 @@
-# Project Hydr8-U
+# Project Hydr8te
 ## MVP Features
 - Login & registration with proper validations using SQLAlchemy/ORM
 - Ability to enter & store water intake each hour (ie. one cup, one bottle, one "default" glass)
