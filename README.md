@@ -7,3 +7,4 @@
 - Facebook OAuth
 - Rewards/Points/Achievement system for bragging rights
 - code refactor/modularization
+- options for inactive/active/athlete (avg recommended water intake)
