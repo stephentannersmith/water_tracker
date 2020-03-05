@@ -41,19 +41,19 @@ class User(db.Model):
         is_valid = True
         if len(user_data["first_name"]) < 1:
             is_valid = False
-            flash("Please provide a first name", 'reg_error')
+            flash("Please provide a first name")
         if len(user_data["last_name"]) < 1:
             is_valid = False
-            flash("Please provide a last name", 'reg_error')
+            flash("Please provide a last name")
         if not EMAIL_REGEX.match(user_data["email"]):
             is_valid = False
-            flash("Please provide a valid email", 'reg_error')
+            flash("Please provide a valid email")
         if len(user_data["password"]) < 8:
             is_valid = False
-            flash("Password should be at least 8 characters", 'reg_error')
-        if user_data["password"] != user_data["cpw"]:
+            flash("Password should be at least 8 characters")
+        if user_data["password"] != user_data["cpassword"]:
             is_valid = False
-            flash("Passwords do not match", 'reg_error')
+            flash("Passwords do not match")
         return is_valid
 
 class Entry(db.Model):
@@ -81,7 +81,7 @@ def register_new_user():
     else:
         new_user = User.add_new_user(request.form)
         session["user_id"] = new_user.id
-        return redirect("/home")
+        return redirect("/")
         
 if __name__  == "__main__":
     app.run(debug=True)
