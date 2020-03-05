@@ -10,7 +10,7 @@ app.secret_key="akdsjf534534yrgfgjlk"
 bcrypt = Bcrypt(app)
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dojos_ninjas.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///water_tracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -83,8 +83,5 @@ def register_new_user():
         session["user_id"] = new_user.id
         return redirect("/home")
         
-
-
-
 if __name__  == "__main__":
     app.run(debug=True)
