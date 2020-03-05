@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy #pylint: disable=import-error
 from flask_migrate import Migrate #pylint: disable=import-error
 from sqlalchemy.sql import func #pylint: disable=import-error
+from Flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 
@@ -29,6 +30,10 @@ class Entry(db.Model):
     author = db.relationship('User', foreign_keys=[author_id], backref="user_entries")
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+
+    # @classmethod
+    # def add_new_entry(cls, entry_data):
+    #     new_entry = cls(amount=entry_data['selection'])
 
 if __name__  == "__main__":
     app.run(debug=True)
