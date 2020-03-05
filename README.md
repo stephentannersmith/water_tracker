@@ -9,3 +9,5 @@
 - code refactor/modularization
 - options for inactive/active/athlete (avg recommended water intake)
 - user goals for consumption/progression
+- presets autofill fields for water consumption
+- see how you compare to your facebook friends
