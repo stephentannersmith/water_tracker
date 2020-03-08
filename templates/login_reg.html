@@ -10,23 +10,10 @@
 </head>
 <body>
   <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand">Hydr8te</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav navbar-right">
-          <li class="nav-item float-right">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
     <div class="row mt-5">
       <div class="col">
         <form action="/register", method="POST" class="justify-content-center">
-          <div class="form-group col-md-6 border">
+          <div class="form-group border">
             <h3 class="text-center mt-2">Registration</h3>
             <div class="form-group">
               <label for="firstname">First Name:</label>
@@ -51,10 +38,39 @@
             <div class="d-flex text-center justify-content-center mt-4 mb-5">
               <button type="submit" class="btn btn-dark text-white">Sign Up!</button>
             </div>
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(with_categories=True) %}
                   {% if messages %}
                       {% for message in messages %}
-                      <p>{{message}}</p>
+                        {% if message[0] == "reg_error" %}
+                      <p>{{message[1]}}</p>
+                        {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
+          </div>
+        </form>
+      </div>
+      <div class="col">
+        <form action="/login", method="POST" class="justify-content-center">
+          <div class="form-group border">
+            <h3 class="text-center mt-2">Login</h3>
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" name="lemail">
+            </div>
+            <div class="form-group">
+              <label for="password">Password:</label>
+              <input type="password" class="form-control" name="lpassword">
+            </div>
+            <div class="d-flex text-center justify-content-center mt-4 mb-5">
+              <button type="submit" class="btn btn-dark text-white">Login</button>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                  {% if messages %}
+                      {% for message in messages %}
+                        {% if message[0] == "log_error" %}
+                      <p>{{message[1]}}</p>
+                        {% endif %}
                       {% endfor %}
                   {% endif %}
               {% endwith %}

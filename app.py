@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session, flash
+from flask import Flask, render_template, redirect, request, session, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy #pylint: disable=import-error
 from flask_migrate import Migrate #pylint: disable=import-error
 from sqlalchemy.sql import func #pylint: disable=import-error
@@ -41,20 +41,21 @@ class User(db.Model):
         is_valid = True
         if len(user_data["first_name"]) < 1:
             is_valid = False
-            flash("Please provide a first name")
+            flash("Please provide a first name", "reg_error")
         if len(user_data["last_name"]) < 1:
             is_valid = False
-            flash("Please provide a last name")
+            flash("Please provide a last name", "reg_error")
         if not EMAIL_REGEX.match(user_data["email"]):
             is_valid = False
-            flash("Please provide a valid email")
+            flash("Please provide a valid email", "reg_error" )
         if len(user_data["password"]) < 8:
             is_valid = False
-            flash("Password should be at least 8 characters")
+            flash("Password should be at least 8 characters", "reg_error")
         if user_data["password"] != user_data["cpassword"]:
             is_valid = False
-            flash("Passwords do not match")
+            flash("Passwords do not match", "reg_error")
         return is_valid
+        
 
 class Entry(db.Model):
     __tablename__ = "entries"
@@ -81,7 +82,29 @@ def register_new_user():
     else:
         new_user = User.add_new_user(request.form)
         session["user_id"] = new_user.id
+        return redirect("/success")
+
+@app.route('/login', methods=["POST"])
+def validate_login():
+    user = User.query.filter_by(email=request.form['lemail']).all()
+    is_valid = True if len(user)==1 and bcrypt.check_password_hash(user[0].password, request.form['lpassword']) else False
+    if is_valid:
+        session['cur_user'] = {
+            "fn": user[0].first_name,
+            "ln": user[0].last_name,
+            "id": user[0].id
+        }
+        return redirect("/success")
+    else:
+        flash("Invalid Login Credentials", "log_error")
         return redirect("/")
+
+@app.route('/success')
+def success():
+    if 'user_id' not in session:
+        return redirect("/")
+    else:
+        return render_template("home.html")
         
 if __name__  == "__main__":
     app.run(debug=True)
