@@ -103,11 +103,8 @@ def validate_login():
     user = User.query.filter_by(email=request.form['lemail']).all()
     is_valid = True if len(user)==1 and bcrypt.check_password_hash(user[0].password, request.form['lpassword']) else False
     if is_valid:
-        session['cur_user'] = {
-            "fn": user[0].first_name,
-            "ln": user[0].last_name,
-            "id": user[0].id
-        }
+        session["logged_in"] = True
+        session["user_id"] = user[0].id
         return redirect("/home")
     else:
         flash("Invalid Login Credentials", "log_error")
@@ -130,6 +127,11 @@ def add_entry():
         Entry.add_new_entry(request.form)
         flash("Successfully logged hydration. Congrats on staying healthy!")
         return redirect('/home')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect("/")
 
 if __name__  == "__main__":
     app.run(debug=True)
