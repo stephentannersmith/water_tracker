@@ -6,12 +6,93 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+<!-- <script src="url_for('static', filename='script.js')"></script> -->
 <title>Hydr8te Home</title>
 </head>
 <body>
-    <h1>HELLO</h1>
-
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="/success">Hydr8te</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link text-white-50" href="/logout">Logout</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white-50" href="#">Edit Profile</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row mt-3">
+        <div class="col">
+          <h1 class="text-center">Hello, {{ user.first_name }}</h1>
+        </div>
+      </div>
+        <div class="row">
+          <div class="col">
+            <form action="/add_entry" method="POST">
+              <div class="form-group">
+                <h2 class="text-center">Log Your Hydration</h2>
+                <label for="Date">Date: (optional)</label>
+                <input type="date" class="form-control" name="created_at">
+              </div>
+              <div class="form-group">
+                <label for="amount of water">Select Vessel: </label>
+                <select class="form-control" name="quantity">
+                  <option value="8">Cup (8 oz)</option>
+                  <option value="15">Bottle (15 oz)</option>
+                  <option value="32">Large Bottle (32 oz)</option>
+                  <option value="128">Gallon (128 oz)</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-center mt-2">
+                <button type="submit" class="btn btn-primary">Log Entry</button>
+              </div>
+            </form>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                    {% if message %}
+                  <p class="mt-4">{{message}}</p>
+                    {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
+          </div>
+          <div class="col mt-5">
+            <table class="table border">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in entries %}
+                <tr>
+                  <th>{{ entry.get_date() }}</th>
+                  <td>{{ entry.get_time() }}</td>
+                  <td>{{ entry.amount }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>

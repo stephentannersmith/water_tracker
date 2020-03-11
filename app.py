@@ -1,9 +1,10 @@
 from flask import Flask, render_template, redirect, request, session, flash, get_flashed_messages
-from flask_sqlalchemy import SQLAlchemy #pylint: disable=import-error
-from flask_migrate import Migrate #pylint: disable=import-error
-from sqlalchemy.sql import func #pylint: disable=import-error
+from flask_sqlalchemy import SQLAlchemy 
+from flask_migrate import Migrate 
+from sqlalchemy.sql import func 
 from flask_bcrypt import Bcrypt
 import re
+import datetime
 
 app = Flask(__name__)
 app.secret_key="akdsjf534534yrgfgjlk"
@@ -66,9 +67,22 @@ class Entry(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
 
-    # @classmethod
-    # def add_new_entry(cls, entry_data):
-    #     new_entry = cls(amount=entry_data['selection'])
+    @classmethod
+    def add_new_entry(cls, entry_data):
+        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'])
+        db.session.add(new_entry)
+        db.session.commit()
+        return new_entry
+
+    def get_time(self):
+        xtime = self.created_at
+        time = xtime.strftime("%I:%M")
+        return time
+
+    def get_date(self):
+        xdate = self.created_at
+        date = xdate.strftime("%x")
+        return date
 
 @app.route('/')
 def index():
@@ -82,7 +96,7 @@ def register_new_user():
     else:
         new_user = User.add_new_user(request.form)
         session["user_id"] = new_user.id
-        return redirect("/success")
+        return redirect("/home")
 
 @app.route('/login', methods=["POST"])
 def validate_login():
@@ -94,17 +108,28 @@ def validate_login():
             "ln": user[0].last_name,
             "id": user[0].id
         }
-        return redirect("/success")
+        return redirect("/home")
     else:
         flash("Invalid Login Credentials", "log_error")
         return redirect("/")
 
-@app.route('/success')
+@app.route('/home')
 def success():
     if 'user_id' not in session:
         return redirect("/")
     else:
-        return render_template("home.html")
-        
+        user = User.query.get(session['user_id'])
+        all_entries_by_user = user.user_entries
+        return render_template("home.html", user=user, entries=all_entries_by_user)
+
+@app.route('/add_entry', methods=["POST"])
+def add_entry():
+    if 'user_id' not in session:
+        return redirect("/")
+    else:
+        Entry.add_new_entry(request.form)
+        flash("Successfully logged hydration. Congrats on staying healthy!")
+        return redirect('/home')
+
 if __name__  == "__main__":
     app.run(debug=True)
