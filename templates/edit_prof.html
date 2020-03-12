@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+<title>Edit Account Information</title>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a class="navbar-brand" href="/home">Hydr8te</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link text-white-50" href="/logout">Logout</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white-50" href="/home">Back</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+            <form action="/update_user" method="POST" class="mt-4">
+              <div class="form-group">
+                <label for="first name">First Name:</label>
+                <input type="text" class="form-control" name="first_name" placeholder="{{user.first_name}}">
+              </div>
+              <div class="form-group">
+                <label for="last name">Last Name:</label>
+                <input type="text" class="form-control" name="last_name" placeholder="{{user.last_name}}">
+              </div>
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" class="form-control" name="email" placeholder="{{user.email}}">
+              </div>
+              <div class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </form>
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                  {% if messages %}
+                      {% for message in messages %}
+                        {% if message[0] == "update_error" %}
+                      <p>{{message[1]}}</p>
+                        {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>

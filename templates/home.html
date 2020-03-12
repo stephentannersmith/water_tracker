@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="/success">Hydr8te</a>
+          <a class="navbar-brand" href="/home">Hydr8te</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -24,7 +24,7 @@
                 <a class="nav-link text-white-50" href="/logout">Logout</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-white-50" href="#">Edit Profile</a>
+                <a class="nav-link text-white-50" href="/edit_profile">Edit Profile</a>
               </li>
             </ul>
           </div>
@@ -73,7 +73,7 @@
               {% if messages %}
                   {% for message in messages %}
                     {% if message %}
-                  <p class="mt-4">{{message}}</p>
+                  <h5 class="mt-4">{{message}}</h5>
                     {% endif %}
                   {% endfor %}
               {% endif %}
@@ -93,7 +93,7 @@
                   {% for entry in entries %}
                   <tr>
                     <th>{{ entry.get_date() }}</th>
-                    <td>{{ entry.get_time() }}</td>
+                    <td>{{ entry.get_time() }} UTC</td>
                     <td>{{ entry.amount }} oz</td>
                   </tr>
                   {% endfor %}

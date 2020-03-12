@@ -56,7 +56,6 @@ class User(db.Model):
             is_valid = False
             flash("Passwords do not match", "reg_error")
         return is_valid
-        
 
 class Entry(db.Model):
     __tablename__ = "entries"
@@ -76,7 +75,7 @@ class Entry(db.Model):
 
     def get_time(self):
         xtime = self.created_at
-        time = xtime.strftime("%I:%M")
+        time = xtime.strftime("%I:%M %p")
         return time
 
     def get_date(self):
@@ -116,7 +115,7 @@ def success():
         return redirect("/")
     else:
         user = User.query.get(session['user_id'])
-        all_entries_by_user = user.user_entries
+        all_entries_by_user = Entry.query.filter_by(author_id=session['user_id']).order_by(Entry.created_at.desc()).all()
         return render_template("home.html", user=user, entries=all_entries_by_user)
 
 @app.route('/add_entry', methods=["POST"])
@@ -132,6 +131,30 @@ def add_entry():
 def logout():
     session.clear()
     return redirect("/")
+
+@app.route('/edit_profile')
+def edit_landing():
+    if 'logged_in' not in session:
+        flash("You must be logged in to complete that action.", "log_error")
+        return redirect('/')
+    user = User.query.filter_by(id=session['user_id'])
+    return render_template('edit_prof.html', user=user[0])
+
+@app.route('/update_user', methods=["POST"])
+def update_prof():
+    if 'logged_in' not in session:
+        flash("You must be logged in to complete that action.", "log_error")
+        return redirect('/')
+    
+    else:
+        user = User.query.get(session['user_id'])
+        user.first_name = request.form['first_name']
+        user.last_name = request.form['last_name']
+        user.email = request.form['email']
+        print(user.first_name, user.last_name, user.email)
+        db.session.commit()
+
+        return redirect('/edit_profile')
 
 if __name__  == "__main__":
     app.run(debug=True)
