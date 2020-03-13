@@ -116,7 +116,11 @@ def success():
     else:
         user = User.query.get(session['user_id'])
         all_entries_by_user = Entry.query.filter_by(author_id=session['user_id']).order_by(Entry.created_at.desc()).all()
-        return render_template("home.html", user=user, entries=all_entries_by_user)
+
+        # set to query of users (today's consumption)
+        current_consumption = 20
+
+        return render_template("home.html", user=user, entries=all_entries_by_user, consumption=current_consumption)
 
 @app.route('/add_entry', methods=["POST"])
 def add_entry():

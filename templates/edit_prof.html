@@ -49,15 +49,6 @@
                 <button type="submit" class="btn btn-primary">Update</button>
               </div>
             </form>
-            {% with messages = get_flashed_messages(with_categories=True) %}
-                  {% if messages %}
-                      {% for message in messages %}
-                        {% if message[0] == "update_error" %}
-                      <p>{{message[1]}}</p>
-                        {% endif %}
-                      {% endfor %}
-                  {% endif %}
-              {% endwith %}
           </div>
         </div>
       </div>
@@ -68,5 +59,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 </body>
 </html>
