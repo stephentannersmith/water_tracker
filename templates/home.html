@@ -42,8 +42,8 @@
             <form action="/add_entry" method="POST">
               <div class="form-group">
                 <h2 class="text-center">Log Your Hydration</h2>
-                <label for="Date">Date: (optional)</label>
-                <input type="date" class="form-control" name="created_at">
+                <label for="Date">Date: </label>
+                <input type="date" class="form-control" name="consump_date" required>
               </div>
               <div class="form-group">
                 <label for="amount of water">Select Vessel: </label>
@@ -60,28 +60,32 @@
               </div>
             </form>
             <form action="/add_entry" method="POST">
-              <div class="form-group">
                 <h3 class="text-center mt-5">Or Input Ounces</h3>
-                <label for="ounces">Ounces</label>
-                <input type="text" class="form-control" name="quantity" required>
-              </div>
+                <div class="form-group">
+                  <label for="Date">Date: </label>
+                  <input type="date" class="form-control" name="consump_date" required>
+                </div>
+                <div class="form-group">
+                  <label for="ounces">Ounces</label>
+                  <input type="text" class="form-control" name="quantity" required>
+                </div>
               <div class="d-flex justify-content-center mt-2">
                 <button type="submit" class="btn btn-primary">Log Entry</button>
               </div>
             </form>
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                  {% for message in messages %}
-                    {% if message %}
-                  <h5 class="mt-4">{{message}}</h5>
-                    {% endif %}
-                  {% endfor %}
-              {% endif %}
-          {% endwith %}
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                  {% if messages %}
+                      {% for message in messages %}
+                        {% if message[0] == "log_success" %}
+                      <h3 class="mt-5">{{message[1]}}</h3>
+                        {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
           </div>
           <div class="col mt-5">
-            <div class="scrollable">
-              <table class="table table-bordered" style="overflow:scroll; height:4rem;">
+            <div style="overflow: auto; max-height: 400px;">
+              <table class="table table-bordered">
                 <thead>
                   <tr>
                     <th>Date</th>
@@ -92,17 +96,26 @@
                 <tbody>
                   {% for entry in entries %}
                   <tr>
-                    <th>{{ entry.get_date() }}</th>
+                    <th>{{ entry.consump_date }}</th>
                     <td>{{ entry.get_time() }} UTC</td>
                     <td>{{ entry.amount }} oz</td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
-              <h1 class="text-center mt-3 mb-3">Today's Progress</h1>
+            </div>
+            <h1 class="text-center mt-3 mb-3">Today's Progress</h1>
               <div id="progressbar">
               </div>
-            </div>
+              {% with messages = get_flashed_messages(with_categories=True) %}
+                  {% if messages %}
+                      {% for message in messages %}
+                        {% if message[0] == "success" %}
+                      <h3 class="mt-5">{{message[1]}}</h3>
+                        {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              {% endwith %}
           </div>
         </div>
       </div>
@@ -112,10 +125,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/ui_darkness/jquery-ui.css">
 <script
-      src="https://code.jquery.com/jquery-3.4.1.js"
-      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-      crossorigin="anonymous"></script>
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
   <script defer>

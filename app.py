@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from sqlalchemy.sql import func 
 from flask_bcrypt import Bcrypt
 import re
-import datetime
+from datetime import date, datetime, time
 
 app = Flask(__name__)
 app.secret_key="akdsjf534534yrgfgjlk"
@@ -57,18 +57,43 @@ class User(db.Model):
             flash("Passwords do not match", "reg_error")
         return is_valid
 
+
 class Entry(db.Model):
     __tablename__ = "entries"
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
     author = db.relationship('User', foreign_keys=[author_id], backref="user_entries")
+    consump_date = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
 
     @classmethod
     def add_new_entry(cls, entry_data):
-        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'])
+        # # get str from form
+        # log_str = entry_data['consump_date']
+        # print(log_str)
+        # # convert the date str to an obj holding only the day value
+        # date_obj = datetime.strptime(log_str, "%Y-%m-%d")
+        # print(date_obj)
+        # #reconvert the date obj to a str 
+        # today_str = date_obj.strftime("%Y-%m-%d")
+        # print(today_str)
+        
+        # # subtract the hour/min/sec value from the date_str
+        # string1 = today_str
+        # string2 = "00:00:00"
+        # if string2 in string1:
+        #     string1.replace(string2, '')
+        # new_str = string1
+        # print(new_str)
+        # # convert into date object
+        # date_obj = datetime.strptime(new_str, "%Y-%m-%d")
+        # print(date_obj)
+       
+        
+        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'], consump_date=entry_data['consump_date'])
+
         db.session.add(new_entry)
         db.session.commit()
         return new_entry
@@ -77,11 +102,7 @@ class Entry(db.Model):
         xtime = self.created_at
         time = xtime.strftime("%I:%M %p")
         return time
-
-    def get_date(self):
-        xdate = self.created_at
-        date = xdate.strftime("%x")
-        return date
+    
 
 @app.route('/')
 def index():
@@ -115,12 +136,35 @@ def success():
         return redirect("/")
     else:
         user = User.query.get(session['user_id'])
-        all_entries_by_user = Entry.query.filter_by(author_id=session['user_id']).order_by(Entry.created_at.desc()).all()
+        all_entries_by_user = Entry.query.filter_by(author_id=session['user_id']).order_by(Entry.consump_date.desc()).all()
 
-        # set to query of users (today's consumption)
-        current_consumption = 20
+        # # set the date var to the current full datetime
+        date = datetime.now()
+        # convert the date obj to a string holding only the day value
+        date_str = date.strftime("%Y-%m-%d")
+        print(date_str)
+        # # subtract the hour/min/sec value from the date_str
+        # string1 = date_str
+        # string2 = "00:00:00"
+        # if string2 in string1:
+        #     string1.replace(string2, '')
+        # new_str = string1
+        # # convert into date object
+        # date_obj = datetime.strptime(new_str, "%Y-%m-%d")
+        # print(date_obj)
 
-        return render_template("home.html", user=user, entries=all_entries_by_user, consumption=current_consumption)
+        consumption = Entry.query.filter_by(author_id=session['user_id']).filter_by(consump_date=date_str).all()
+
+        print(consumption)
+        
+        today_consumption = 0
+        for entry in consumption:
+            today_consumption += entry.amount
+        
+        if today_consumption >= 64:
+            flash("You hit your hydration goal of 64 oz!", "success")
+
+        return render_template("home.html", user=user, entries=all_entries_by_user, consumption=today_consumption)
 
 @app.route('/add_entry', methods=["POST"])
 def add_entry():
@@ -128,7 +172,7 @@ def add_entry():
         return redirect("/")
     else:
         Entry.add_new_entry(request.form)
-        flash("Successfully logged hydration. Congrats on staying healthy!")
+        flash("Successfully logged hydration. Congrats on staying healthy!", "log_success")
         return redirect('/home')
 
 @app.route('/logout')
