@@ -84,7 +84,7 @@
               {% endwith %}
           </div>
           <div class="col mt-5">
-            <div style="overflow: auto; max-height: 400px;">
+            <div style="overflow: auto; max-height: 400px; height: 400px;">
               <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -104,7 +104,7 @@
                 </tbody>
               </table>
             </div>
-            <h1 class="text-center mt-3 mb-3">Today's Progress</h1>
+            <h1 class="text-center mt-3 mb-4">Today's Progress</h1>
               <div id="progressbar">
               </div>
               {% with messages = get_flashed_messages(with_categories=True) %}
@@ -125,7 +125,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/ui_darkness/jquery-ui.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/start/jquery-ui.css">
 <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -137,7 +137,9 @@
     var current_level = {{consumption}}; 
 
   $( "#progressbar" ).progressbar({
-  value: current_level, max: goal
+  value: current_level, max: goal, classes: {
+    "ui-progressbar": "highlight"
+  }
   });
   </script>
 </body>

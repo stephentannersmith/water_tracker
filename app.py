@@ -13,6 +13,7 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///water_tracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = './static/images/uploads'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -117,6 +118,14 @@ def register_new_user():
         new_user = User.add_new_user(request.form)
         session["user_id"] = new_user.id
         return redirect("/home")
+
+@app.route('/email', methods=["POST"])
+def username():
+    found = False
+    found_user = User.query.filter_by(email=request.form['email']).all()
+    if found_user:
+        found = True
+    return render_template('/partials/username.html', found=found)
 
 @app.route('/login', methods=["POST"])
 def validate_login():
