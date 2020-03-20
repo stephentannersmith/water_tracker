@@ -71,30 +71,7 @@ class Entry(db.Model):
 
     @classmethod
     def add_new_entry(cls, entry_data):
-        # # get str from form
-        # log_str = entry_data['consump_date']
-        # print(log_str)
-        # # convert the date str to an obj holding only the day value
-        # date_obj = datetime.strptime(log_str, "%Y-%m-%d")
-        # print(date_obj)
-        # #reconvert the date obj to a str 
-        # today_str = date_obj.strftime("%Y-%m-%d")
-        # print(today_str)
-        
-        # # subtract the hour/min/sec value from the date_str
-        # string1 = today_str
-        # string2 = "00:00:00"
-        # if string2 in string1:
-        #     string1.replace(string2, '')
-        # new_str = string1
-        # print(new_str)
-        # # convert into date object
-        # date_obj = datetime.strptime(new_str, "%Y-%m-%d")
-        # print(date_obj)
-       
-        
         new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'], consump_date=entry_data['consump_date'])
-
         db.session.add(new_entry)
         db.session.commit()
         return new_entry
@@ -152,15 +129,6 @@ def success():
         # convert the date obj to a string holding only the day value
         date_str = date.strftime("%Y-%m-%d")
         print(date_str)
-        # # subtract the hour/min/sec value from the date_str
-        # string1 = date_str
-        # string2 = "00:00:00"
-        # if string2 in string1:
-        #     string1.replace(string2, '')
-        # new_str = string1
-        # # convert into date object
-        # date_obj = datetime.strptime(new_str, "%Y-%m-%d")
-        # print(date_obj)
 
         consumption = Entry.query.filter_by(author_id=session['user_id']).filter_by(consump_date=date_str).all()
 
