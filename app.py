@@ -84,7 +84,9 @@ class Entry(db.Model):
 
 @app.route('/')
 def index():
-    return render_template("login_reg.html")
+    if 'user_id' in session:
+        return redirect('/home')
+    return render_template("index.html")
 
 @app.route('/register', methods=["POST"])
 def register_new_user():
@@ -93,6 +95,7 @@ def register_new_user():
         return redirect("/")
     else:
         new_user = User.add_new_user(request.form)
+        session["logged_in"] = True
         session["user_id"] = new_user.id
         return redirect("/home")
 
@@ -104,6 +107,10 @@ def username():
         found = True
     return render_template('/partials/username.html', found=found)
 
+@app.route('/login_page')
+def login_page():
+    return render_template("login_page.html")
+
 @app.route('/login', methods=["POST"])
 def validate_login():
     user = User.query.filter_by(email=request.form['lemail']).all()
@@ -114,7 +121,7 @@ def validate_login():
         return redirect("/home")
     else:
         flash("Invalid Login Credentials", "log_error")
-        return redirect("/")
+        return redirect("/login_page")
 
 @app.route('/home')
 def success():

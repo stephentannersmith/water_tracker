@@ -35,15 +35,15 @@
             <form action="/update_user" method="POST" class="mt-4">
               <div class="form-group">
                 <label for="first name">First Name:</label>
-                <input type="text" class="form-control" name="first_name" placeholder="{{user.first_name}}">
+                <input type="text" class="form-control" name="first_name" placeholder="{{user.first_name}}" required>
               </div>
               <div class="form-group">
                 <label for="last name">Last Name:</label>
-                <input type="text" class="form-control" name="last_name" placeholder="{{user.last_name}}">
+                <input type="text" class="form-control" name="last_name" placeholder="{{user.last_name}}" required>
               </div>
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="text" class="form-control" name="email" placeholder="{{user.email}}">
+                <input type="text" class="form-control" name="email" placeholder="{{user.email}}" required>
               </div>
               <div class="d-flex justify-content-center mt-4">
                 <button type="submit" class="btn btn-primary">Update</button>

@@ -11,3 +11,10 @@
 - user goals for consumption/progression - IN DEVELOPMENT
 - presets autofill fields for water consumption - COMPLETE
 - see how you compare to your facebook friends
+## CHANGES TO BE MADE 
+- change placement of "hello user" 
+- lock titles for table in place
+- width of left column needs to be smaller
+- make everything smaller
+- add background image (experiment) - get rid of the white
+- login/reg page - make the separation more apparent
