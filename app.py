@@ -65,13 +65,14 @@ class Entry(db.Model):
     amount = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
     author = db.relationship('User', foreign_keys=[author_id], backref="user_entries")
+    entry_time = db.Column(db.String)
     consump_date = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
 
     @classmethod
     def add_new_entry(cls, entry_data):
-        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'], consump_date=entry_data['consump_date'])
+        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'], consump_date=entry_data['consump_date'], entry_time=entry_data['time'])
         db.session.add(new_entry)
         db.session.commit()
         return new_entry
@@ -156,7 +157,7 @@ def add_entry():
         return redirect("/")
     else:
         Entry.add_new_entry(request.form)
-        flash("Successfully logged hydration. Congrats on staying healthy!", "log_success")
+        flash("Successfully logged hydration.", "log_success")
         return redirect('/home')
 
 @app.route('/logout')

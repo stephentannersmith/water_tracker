@@ -44,6 +44,7 @@
                 <h2 class="text-center">Log Your Hydration</h2>
                 <label for="Date">Date: </label>
                 <input type="date" class="form-control" name="consump_date" required>
+                <input type="hidden" value="" name="time" id="time">
               </div>
               <div class="form-group">
                 <label for="amount of water">Select Vessel: </label>
@@ -64,6 +65,7 @@
                 <div class="form-group">
                   <label for="Date">Date: </label>
                   <input type="date" class="form-control" name="consump_date" required>
+                  <input type="hidden" value="" name="time" id="time2">
                 </div>
                 <div class="form-group">
                   <label for="ounces">Ounces</label>
@@ -99,7 +101,7 @@
                   {% for entry in entries %}
                   <tr>
                     <th>{{ entry.consump_date }}</th>
-                    <td>{{ entry.get_time() }} UTC</td>
+                    <td>{{ entry.entry_time }}</td>
                     <td>{{ entry.amount }} oz</td>
                   </tr>
                   {% endfor %}
@@ -143,6 +145,19 @@
     "ui-progressbar": "highlight"
   }
   });
+
+  function getTime() {
+    console.log('firing')
+    let time = new Date().toLocaleTimeString();
+    document.getElementById('time').value = new Date().toLocaleTimeString();
+    document.getElementById('time2').value = new Date().toLocaleTimeString();
+    console.log('this is the time: ', time) 
+    return time;
+  }
+
+  var current_time = getTime();
+
+
   </script>
 </body>
 </html>
