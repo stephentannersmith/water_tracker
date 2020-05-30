@@ -11,7 +11,7 @@ app.secret_key="akdsjf534534yrgfgjlk"
 bcrypt = Bcrypt(app)
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///water_tracker.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://xlrxyhbvxevicf:f19d5c22f1a34b786717d23a350c7d33caa30a3f25232af9b21b18da6b9cf481@ec2-34-232-147-86.compute-1.amazonaws.com:5432/d7s50vobhhqbbp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = './static/images/uploads'
 
