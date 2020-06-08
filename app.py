@@ -1,22 +1,23 @@
 from flask import Flask, render_template, redirect, request, session, flash, get_flashed_messages
-from flask_sqlalchemy import SQLAlchemy 
-from flask_migrate import Migrate 
-from sqlalchemy.sql import func 
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy.sql import func
 from flask_bcrypt import Bcrypt
 import re
 from datetime import date, datetime, time
 
 app = Flask(__name__)
-app.secret_key="akdsjf534534yrgfgjlk"
+app.secret_key = "akdsjf534534yrgfgjlk"
 bcrypt = Bcrypt(app)
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://xlrxyhbvxevicf:f19d5c22f1a34b786717d23a350c7d33caa30a3f25232af9b21b18da6b9cf481@ec2-34-232-147-86.compute-1.amazonaws.com:5432/d7s50vobhhqbbp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///water_tracker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = './static/images/uploads'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -26,21 +27,28 @@ class User(db.Model):
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, server_default=func.now())
-    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = db.Column(
+        db.DateTime, server_default=func.now(), onupdate=func.now())
 
     @classmethod
     def add_new_user(cls, user_data):
         hashed_password = bcrypt.generate_password_hash(user_data['password'])
-        new_user = cls(first_name=user_data['first_name'], last_name=user_data['last_name'], email=user_data['email'], password=hashed_password)
+        new_user = cls(first_name=user_data['first_name'], last_name=user_data['last_name'],
+                       email=user_data['email'], password=hashed_password)
         db.session.add(new_user)
         print("adding new user...")
         print(new_user)
         db.session.commit()
         return new_user
-    
+
     @classmethod
     def validate_user(cls, user_data):
         is_valid = True
+        # search for any existing users
+        found_user = User.query.filter_by(email=user_data['email']).all()
+        if found_user:
+            is_valid = False
+            flash("User already exists.")
         if len(user_data["first_name"]) < 1:
             is_valid = False
             flash("Please provide a first name", "reg_error")
@@ -49,7 +57,7 @@ class User(db.Model):
             flash("Please provide a last name", "reg_error")
         if not EMAIL_REGEX.match(user_data["email"]):
             is_valid = False
-            flash("Please provide a valid email", "reg_error" )
+            flash("Please provide a valid email", "reg_error")
         if len(user_data["password"]) < 8:
             is_valid = False
             flash("Password should be at least 8 characters", "reg_error")
@@ -63,16 +71,20 @@ class Entry(db.Model):
     __tablename__ = "entries"
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Integer)
-    author_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
-    author = db.relationship('User', foreign_keys=[author_id], backref="user_entries")
+    author_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"), nullable=False)
+    author = db.relationship('User', foreign_keys=[
+                             author_id], backref="user_entries")
     entry_time = db.Column(db.String)
     consump_date = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=func.now())
-    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+    updated_at = db.Column(
+        db.DateTime, server_default=func.now(), onupdate=func.now())
 
     @classmethod
     def add_new_entry(cls, entry_data):
-        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'], consump_date=entry_data['consump_date'], entry_time=entry_data['time'])
+        new_entry = cls(amount=entry_data['quantity'], author_id=session['user_id'],
+                        consump_date=entry_data['consump_date'], entry_time=entry_data['time'])
         db.session.add(new_entry)
         db.session.commit()
         return new_entry
@@ -81,7 +93,7 @@ class Entry(db.Model):
         xtime = self.created_at
         time = xtime.strftime("%I:%M %p")
         return time
-    
+
 
 @app.route('/')
 def index():
@@ -89,16 +101,19 @@ def index():
         return redirect('/home')
     return render_template("index.html")
 
+
 @app.route('/register', methods=["POST"])
 def register_new_user():
     validation_check = User.validate_user(request.form)
     if not validation_check:
+        flash("User already exists.")
         return redirect("/")
     else:
         new_user = User.add_new_user(request.form)
         session["logged_in"] = True
         session["user_id"] = new_user.id
         return redirect("/home")
+
 
 @app.route('/email', methods=["POST"])
 def username():
@@ -108,14 +123,19 @@ def username():
         found = True
     return render_template('/partials/username.html', found=found)
 
+
 @app.route('/login_page')
 def login_page():
     return render_template("login_page.html")
 
+
 @app.route('/login', methods=["POST"])
 def validate_login():
     user = User.query.filter_by(email=request.form['lemail']).all()
-    is_valid = True if len(user)==1 and bcrypt.check_password_hash(user[0].password, request.form['lpassword']) else False
+    print(user)
+    is_valid = True if len(user) == 1 and bcrypt.check_password_hash(
+        user[0].password, request.form['lpassword']) else False
+    print(is_valid)
     if is_valid:
         session["logged_in"] = True
         session["user_id"] = user[0].id
@@ -124,13 +144,15 @@ def validate_login():
         flash("Invalid Login Credentials", "log_error")
         return redirect("/login_page")
 
+
 @app.route('/home')
 def success():
     if 'user_id' not in session:
         return redirect("/")
     else:
         user = User.query.get(session['user_id'])
-        all_entries_by_user = Entry.query.filter_by(author_id=session['user_id']).order_by(Entry.consump_date.desc()).all()
+        all_entries_by_user = Entry.query.filter_by(
+            author_id=session['user_id']).order_by(Entry.consump_date.desc()).all()
 
         # # set the date var to the current full datetime
         date = datetime.now()
@@ -138,18 +160,20 @@ def success():
         date_str = date.strftime("%Y-%m-%d")
         print(date_str)
 
-        consumption = Entry.query.filter_by(author_id=session['user_id']).filter_by(consump_date=date_str).all()
+        consumption = Entry.query.filter_by(
+            author_id=session['user_id']).filter_by(consump_date=date_str).all()
 
         print(consumption)
-        
+
         today_consumption = 0
         for entry in consumption:
             today_consumption += entry.amount
-        
+
         if today_consumption >= 64:
             flash("You hit your hydration goal of 64 oz!", "success")
 
         return render_template("home.html", user=user, entries=all_entries_by_user, consumption=today_consumption)
+
 
 @app.route('/add_entry', methods=["POST"])
 def add_entry():
@@ -160,10 +184,12 @@ def add_entry():
         flash("Successfully logged hydration.", "log_success")
         return redirect('/home')
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect("/")
+
 
 @app.route('/edit_profile')
 def edit_landing():
@@ -173,12 +199,13 @@ def edit_landing():
     user = User.query.filter_by(id=session['user_id'])
     return render_template('edit_prof.html', user=user[0])
 
+
 @app.route('/update_user', methods=["POST"])
 def update_prof():
     if 'logged_in' not in session:
         flash("You must be logged in to complete that action.", "log_error")
         return redirect('/')
-    
+
     else:
         user = User.query.get(session['user_id'])
         user.first_name = request.form['first_name']
@@ -189,5 +216,6 @@ def update_prof():
 
         return redirect('/edit_profile')
 
-if __name__  == "__main__":
+
+if __name__ == "__main__":
     app.run(debug=True)
